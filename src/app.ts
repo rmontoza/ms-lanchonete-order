@@ -7,6 +7,9 @@ import { OrderController } from './adapter/driver/api/controllers/OrderControlle
 import { TYPES } from '../types';
 import { IDatabase } from './adapter/driven/infra/interfaces/IDatabase';
 
+import 'reflect-metadata';
+
+
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
