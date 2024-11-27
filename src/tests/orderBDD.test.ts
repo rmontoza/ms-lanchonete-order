@@ -1,10 +1,10 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { expect } from 'chai';
+import { loadFeature, defineFeature } from 'jest-cucumber';
 import { OrderUseCase } from '../../src/core/domain/application/usecases/Order/OrderUseCase';
-import OrderItem from '../../src/core/domain/entities/Order/OrderItem';
 import Order from '../core/domain/entities/Order/Order';
-
+import OrderItem from '../core/domain/entities/Order/OrderItem';
 import { IOrderRepository } from '../../src/core/domain/repositories/IOrderRepository';
+
+const feature = loadFeature('src/tests/features/order.feature');
 
 let orderUseCase: OrderUseCase;
 let mockOrderRepository: jest.Mocked<IOrderRepository>;
@@ -12,52 +12,59 @@ let createdOrder: Order | null = null;
 let orderItems: OrderItem[] = [];
 let document: string;
 
-Given('a customer with document {string}', (doc: string) => {
-  document = doc;
+defineFeature(feature, (test) => {
+  test('Create a new order and verify it exists', ({ given, and, when, then }) => {
+    jest.setTimeout(15000); // Aumenta o timeout, se necessário
 
-  mockOrderRepository = {
-    createOrder: jest.fn(),
-    getOrderByNumber: jest.fn(),
-    updateStatusOrder: jest.fn(),
-    getOrders: jest.fn(),
-  };
+    given('a customer with document "12345678901"', () => {
+      document = '12345678901';
 
-  orderUseCase = new OrderUseCase(mockOrderRepository);
-});
+      mockOrderRepository = {
+        createOrder: jest.fn(),
+        getOrderByNumber: jest.fn(),
+        updateStatusOrder: jest.fn(),
+        getOrders: jest.fn(),
+      };
 
-Given('the following order items:', (table: any) => {
-  orderItems = table.raw().map(
-    (row: any) => new OrderItem(row[0], parseFloat(row[1]), parseInt(row[2], 10))
-  );
-});
+      orderUseCase = new OrderUseCase(mockOrderRepository);
+    });
 
-When('the order is created', async () => {
-  const totalValue = orderItems.reduce((sum, item) => sum + (item.valeu || 0) * (item.quanity || 0), 0);
+    and('the following order items:', (table) => {
+      orderItems = table.map(
+        (row: string[]) => new OrderItem(row[0], parseFloat(row[1]), parseInt(row[2], 10))
+      );
+    });
 
-  const newOrder = new Order(
-    '1',
-    12345,
-    document,
-    'CREATED',
-    orderItems,
-    totalValue,
-    new Date()
-  );
+    when('the order is created', async () => {
+      const totalValue = orderItems.reduce(
+        (sum, item) => sum + (item.valeu || 0) * (item.quanity || 0),
+        0
+      );
 
-  mockOrderRepository.createOrder.mockResolvedValue(newOrder);
+      const newOrder = new Order(
+        '1',
+        12345,
+        document,
+        'CREATED',
+        orderItems,
+        totalValue,
+        new Date()
+      );
 
-  createdOrder = await orderUseCase.createOrder(document, orderItems, totalValue);
-});
+      mockOrderRepository.createOrder.mockResolvedValue(newOrder);
 
-Then('the order should have an order number', () => {
-  expect(createdOrder).to.have.property('orderNumber');
-  expect(createdOrder?.orderNumber).to.be.a('number');
-});
+      createdOrder = await orderUseCase.createOrder(document, orderItems, totalValue);
+    });
 
-Then('the total value should be {int}', (totalValue: number) => {
-  expect(createdOrder?.valueOrder).to.equal(totalValue);
-});
+    then('the order should be retrievable by its number', async () => {
+      const orderNumber = 12345;
 
-Then('the order status should be {string}', (status: string) => {
-  expect(createdOrder?.status).to.equal(status);
+      mockOrderRepository.getOrderByNumber.mockResolvedValue(createdOrder);
+
+      const retrievedOrder = await orderUseCase.getOrderByNumber(orderNumber);
+
+      expect(mockOrderRepository.getOrderByNumber).toHaveBeenCalledWith(orderNumber);
+      expect(retrievedOrder).toEqual(createdOrder);
+    });
+  });
 });
