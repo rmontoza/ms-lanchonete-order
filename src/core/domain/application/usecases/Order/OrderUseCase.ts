@@ -7,6 +7,7 @@ import OrderItem from '../../../entities/Order/OrderItem';
 import { StatusOrderEnum } from '../../../enums/StatusOrderEnum';
 import { ValidationError, DatabaseError, NotFoundError } from '../../../erros/DomainErros';
 
+import 'reflect-metadata';
 
 @injectable()
 export class OrderUseCase implements IOrderUseCase {

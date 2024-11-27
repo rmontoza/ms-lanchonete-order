@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: "Dockerfile"
-    image: applanchonete
+    image: mslanchoneteorder
     ports:
       - "3000:3000"
     environment:
