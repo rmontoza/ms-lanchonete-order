@@ -20,31 +20,11 @@ spec:
         ports:
         - containerPort: 3000
         env:
-        - name: MYSQL_HOST
+        - name: MONGODB_URI
           valueFrom:
             configMapKeyRef:
-              name: ms-lanchonete-costumer-config
-              key: MYSQL_HOST
-        - name: MYSQL_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: ms-lanchonete-costumer-config
-              key: MYSQL_PORT
-        - name: MYSQL_USER
-          valueFrom:
-            configMapKeyRef:
-              name: ms-lanchonete-costumer-config
-              key: MYSQL_USER
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              name: ms-lanchonete-costumer-config
-              key: MYSQL_PASSWORD
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: ms-lanchonete-costumer-config
-              key: MYSQL_DATABASE
+              name: ms-lanchonete-order-config
+              key: MONGODB_URI
         volumeMounts:
         - name: ms-lanchonete-order-volume
           mountPath: /app
