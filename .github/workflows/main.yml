@@ -90,6 +90,10 @@ jobs:
 
     - name: Deploy to EKS
       run: |
+          kubectl delete -f src/k8s/appLanchonete-order-configmap.yaml
+          kubectl delete -f src/k8s/appLanchonete-order-deployment.yaml
+          kubectl delete -f src/k8s/appLanchonete-order-service-aws.yaml
+          kubectl delete -f src/k8s/appLanchonete-order-hpa.yaml
           kubectl apply -f src/k8s/appLanchonete-order-configmap.yaml
           kubectl apply -f src/k8s/appLanchonete-order-deployment.yaml
           kubectl apply -f src/k8s/appLanchonete-order-service-aws.yaml
