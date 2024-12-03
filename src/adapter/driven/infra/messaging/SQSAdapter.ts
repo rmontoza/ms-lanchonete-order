@@ -17,6 +17,8 @@ export class SQSAdapter {
     });
 
     try {
+
+      console.log(`FILA = ${this.queueUrl}`);
       await this.client.send(message);
       console.log('Message sent to SQS:', payload);
     } catch (error) {
