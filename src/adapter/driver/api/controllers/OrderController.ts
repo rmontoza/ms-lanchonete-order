@@ -201,7 +201,7 @@ export class OrderController {
     /**
  * @swagger
  * /api/order-status:
- *   put:
+ *   post:
  *     tags: [Order]
  *     summary: Atualiza o status do pedido
  *     requestBody:
