@@ -1,11 +1,14 @@
 import { OrderUseCase } from '../../src/core/domain/application/usecases/Order/OrderUseCase';
 import { IOrderRepository } from '../../src/core/domain/repositories/IOrderRepository';
+import { IMessageQueue } from '../adapter/driven/infra/repositories/IMessageQueue';
 import Order from '../core/domain/entities/Order/Order';
 import OrderItem from '../core/domain/entities/Order/OrderItem';
 
 describe('OrderUseCase', () => {
   let orderUseCase: OrderUseCase;
   let mockOrderRepository: jest.Mocked<IOrderRepository>;
+  let mockMessageQueue: jest.Mocked<IMessageQueue>;
+
 
   beforeEach(() => {
     mockOrderRepository = {
@@ -15,7 +18,12 @@ describe('OrderUseCase', () => {
       getOrders: jest.fn(),
     };
 
-    orderUseCase = new OrderUseCase(mockOrderRepository);
+    
+    mockMessageQueue = {
+      sendMessage: jest.fn(),
+    };
+
+    orderUseCase = new OrderUseCase(mockOrderRepository, mockMessageQueue);
   });
 
   it('should create an order with items', async () => {
