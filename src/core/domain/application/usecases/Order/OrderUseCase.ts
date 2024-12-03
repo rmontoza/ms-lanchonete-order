@@ -8,18 +8,19 @@ import { StatusOrderEnum } from '../../../enums/StatusOrderEnum';
 import { ValidationError, DatabaseError, NotFoundError } from '../../../erros/DomainErros';
 
 import 'reflect-metadata';
+import { IMessageQueue } from '../../../../../adapter/driven/infra/repositories/IMessageQueue';
 
 @injectable()
 export class OrderUseCase implements IOrderUseCase {
   constructor(
     @inject(TYPES.OrderRepository) private readonly orderRepository: IOrderRepository,
+    @inject(TYPES.MessageQueue) private readonly messageQueue: IMessageQueue
   ) {}
 
   async getOrderByNumber(orderNumber: number): Promise<Order | null> {
 
     const order = await this.orderRepository.getOrderByNumber(orderNumber); 
     
-
     if(order == null){
       throw new NotFoundError("Order not found!");
     }
@@ -28,10 +29,16 @@ export class OrderUseCase implements IOrderUseCase {
 
   }
 
-  
-  updateStatusOrder(idOrder: string, status: StatusOrderEnum): Promise<void> {
+  async updateStatusOrder(idOrder: string, status: StatusOrderEnum): Promise<void> {
 
     this.validateOrderStatus(status);
+
+    const payload = {
+      idOrder: idOrder,
+      status: status,
+    };
+
+    await this.messageQueue.sendMessage(payload);
     
     return this.orderRepository.updateStatusOrder(idOrder, status);
   }

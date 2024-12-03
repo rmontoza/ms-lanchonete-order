@@ -37,12 +37,6 @@ export class CheckoutUseCase implements ICheckoutUseCase, IOrderUseCase {
         this.validateOrderStatus(status);
 
             // Enviar mensagem para a fila SQS
-        const payload = {
-          idOrder: id,
-          status: status,
-        };
-
-        await this.messageQueue.sendMessage(payload);
 
         return this.checkoutRepository.checkout(id, status);
 
