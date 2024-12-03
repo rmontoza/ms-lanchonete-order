@@ -3,11 +3,13 @@ import { OrderUseCase } from '../../src/core/domain/application/usecases/Order/O
 import Order from '../core/domain/entities/Order/Order';
 import OrderItem from '../core/domain/entities/Order/OrderItem';
 import { IOrderRepository } from '../../src/core/domain/repositories/IOrderRepository';
+import { IMessageQueue } from '../adapter/driven/infra/repositories/IMessageQueue';
 
 const feature = loadFeature('src/tests/features/order.feature');
 
 let orderUseCase: OrderUseCase;
 let mockOrderRepository: jest.Mocked<IOrderRepository>;
+let mockMessageQueue: jest.Mocked<IMessageQueue>;
 let createdOrder: Order | null = null;
 let orderItems: OrderItem[] = [];
 let document: string;
@@ -19,6 +21,11 @@ defineFeature(feature, (test) => {
     given('a customer with document "12345678901"', () => {
       document = '12345678901';
 
+
+      mockMessageQueue = {
+        sendMessage: jest.fn(),
+      };
+
       mockOrderRepository = {
         createOrder: jest.fn(),
         getOrderByNumber: jest.fn(),
@@ -26,7 +33,7 @@ defineFeature(feature, (test) => {
         getOrders: jest.fn(),
       };
 
-      orderUseCase = new OrderUseCase(mockOrderRepository);
+      orderUseCase = new OrderUseCase(mockOrderRepository, mockMessageQueue);
     });
 
     and('the following order items:', (table) => {
