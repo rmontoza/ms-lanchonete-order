@@ -5,7 +5,8 @@ export class SQSAdapter {
   private queueUrl: string;
 
   constructor(queueUrl: string) {
-    this.client = new SQSClient({});
+    const region = process.env.AWS_REGION || 'us-east-1'; // Define a região padrão, se não fornecida
+    this.client = new SQSClient({ region }); // Configura a região no cliente
     this.queueUrl = queueUrl;
   }
 
