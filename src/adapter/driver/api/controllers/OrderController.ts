@@ -21,7 +21,7 @@ export class OrderController {
     this.router.post('/api/orders', this.createOrder.bind(this));
     this.router.get('/api/orders', this.getOrders.bind(this));
     this.router.get('/api/order-by-number/:orderNumber', this.getOrderByNumber.bind(this));
-    this.router.put('/api/order-status', this.updateStatusOrder.bind(this));
+    this.router.post('/api/order-status', this.updateStatusOrder.bind(this));
 
   }
   /**
