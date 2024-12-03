@@ -40,7 +40,7 @@ container.bind<CheckoutController>(TYPES.CheckoutController).to(CheckoutControll
 container.bind<IDatabase>(TYPES.Database).toConstantValue(new MongoDatabase(`${process.env.MONGODB_URI}`));
 
 container.bind(TYPES.MessageQueue).toDynamicValue(() => {
-    const queueUrl = process.env.SQS_QUEUE_URL || '';
+    const queueUrl = process.env.SQS_QUEUE_URL || 'https://sqs.us-east-1.amazonaws.com/010928185677/sql-lanchonete-checkout';
     return new SQSAdapter(queueUrl);
   });
 
